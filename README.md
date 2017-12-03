@@ -12,6 +12,83 @@ composer require rpkamp/mailhog-behat-extension <your-http-client-of-choice>
 
 For more information please refer to the [HTTPlug documentation for Library Users][httplug-docs].
 
+## Usage
+
+### Register extension in Behat
+
+Add the extension to your `behat.yml` like so:
+
+```yaml
+default:
+  suites:
+    # your suite configuration here
+  extensions:
+    rpkamp\Behat\MailhogExtension:
+      base_url: http://localhost:8025
+```
+
+The `base_url` is the URL where the Mailhog Web UI is listening to (by default this is `http://localhost:8025).
+
+### Implement MailhogAwareContext
+
+Let your FeatureContext implement `MailhogAwareContext` and implement the method in that interface:
+
+```php
+<?php
+declare(strict_types=1);
+
+use rpkamp\Mailhog\MailhogClient;
+use rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext;
+
+class FeatureContext implements MailhogAwareContext
+{
+    private $mailhog;
+    
+    public function setMailhog(MailhogClient $client)
+    {
+         $this->mailhog = $client;
+    }
+}
+```
+
+Now every time your FeatureContext is initialized Behat will inject a MailhogClient in it you can use using the `$mailhog` property of your context. For example:
+
+```php
+<?php
+declare(strict_types=1);
+
+use rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext;
+
+class FeatureContext implements MailhogAwareContext
+{
+    // implement setMailhog as above
+    
+    /**
+     * @Then /^there should be (\d+) email in my inbox$/
+     */
+    public function thereShouldBeEmailInMyInbox(int $numEmails)
+    {
+        if ($numEmails !== $this->mailhog->getNumberOfMessages()) {
+            throw new Exception('Unexpected number of messages.');
+        }
+    }
+}
+```
+
+### Use email tag to purge emails before scenarios
+
+In scenarios where you want to make sure you have received the correct number of messages you will want to purge mailhog before the scenario is started. In order to do that add the `@email` tag to either the scenario or the feature. As usual, when you apply it to the feature it applies to all scenarios within that feature.
+
+```gherkin
+Feature:
+
+    @email
+    Scenario: I should receive no more than 1 email
+      Given some state
+      When something happened
+      Then there should be 1 email in my inbox
+```
+
 ## Run tests
 
 Make sure you have Mailhog running and run:
