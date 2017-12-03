@@ -45,4 +45,12 @@ final class FeatureContext implements Context, MailhogAwareContext
         TestCase::assertEquals($subject, $message->subject);
         TestCase::assertEquals($body, $message->body);
     }
+
+    /**
+     * @Then /^there should be (\d+) email in my inbox$/
+     */
+    public function thereShouldBeEmailInMyInbox(int $numEmails)
+    {
+        TestCase::assertEquals($numEmails, $this->mailHog->getNumberOfMessages());
+    }
 }
