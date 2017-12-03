@@ -50,53 +50,76 @@ final class MailhogExtension implements Extension
         $this->registerPurgeListener($container);
     }
 
-    public function registerHttpClient(ContainerBuilder $container): void
+    private function registerHttpClient(ContainerBuilder $container): void
     {
         $httpClient = new Definition(HttpClient::class);
         $httpClient->setFactory([HttpClientDiscovery::class, 'find']);
-        $httpClient->setPrivate(true);
+        $this->markServicePrivate($httpClient);
 
         $container->setDefinition('mailhog.http_client', $httpClient);
     }
 
-    public function registerHttpMessageFactory(ContainerBuilder $container): void
+    private function registerHttpMessageFactory(ContainerBuilder $container): void
     {
         $httpMessageFactory = new Definition(MessageFactory::class);
         $httpMessageFactory->setFactory([MessageFactoryDiscovery::class, 'find']);
-        $httpMessageFactory->setPrivate(true);
+        $this->markServicePrivate($httpMessageFactory);
 
         $container->setDefinition('mailhog.http_message_factory', $httpMessageFactory);
     }
 
-    public function registerMailhogClient(ContainerBuilder $container): void
+    private function registerMailhogClient(ContainerBuilder $container): void
     {
         $mailhogClient = new Definition(MailhogClient::class, [
             new Reference('mailhog.http_client'),
             new Reference('mailhog.http_message_factory'),
             '%mailhog.base_url%'
         ]);
+        $this->markServicePublic($mailhogClient);
 
         $container->setDefinition('mailhog.client', $mailhogClient);
     }
 
-    public function registerContextInitializer(ContainerBuilder $container): void
+    private function registerContextInitializer(ContainerBuilder $container): void
     {
         $contextInitializer = new Definition(MailhogAwareInitializer::class, [
             new Reference('mailhog.client'),
         ]);
 
         $contextInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
-        $contextInitializer->setPrivate(true);
+        $this->markServicePrivate($contextInitializer);
         $container->setDefinition('mailhog.context_initializer', $contextInitializer);
     }
 
-    public function registerPurgeListener(ContainerBuilder $container): void
+    private function registerPurgeListener(ContainerBuilder $container): void
     {
         $listener = new Definition(EmailPurgeListener::class, [new Reference('mailhog.client')]);
         $listener->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => 0]);
-        $listener->setPrivate(true);
+        $this->markServicePrivate($listener);
 
         $container->setDefinition('mailhog.purge_listener', $listener);
+    }
+
+    private function markServicePrivate(Definition $definition)
+    {
+        if (!method_exists($definition, 'setPrivate')) {
+            // symfony/dependency-injection >= 3.4 where
+            // all services are private by default
+            return;
+        }
+
+        $definition->setPrivate(true);
+    }
+
+    public function markServicePublic(Definition $definition)
+    {
+        if (!method_exists($definition, 'setPublic')) {
+            // symfony/dependency-injection < 3.4 where
+            // all services are public by default
+            return;
+        }
+
+        $definition->setPublic(true);
     }
 
     public function process(ContainerBuilder $container)
