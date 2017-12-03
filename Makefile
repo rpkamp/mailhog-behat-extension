@@ -3,7 +3,7 @@ help:
 	@awk '/^#/{c=substr($$0,3);next}c&&/^[[:alpha:]][[:alnum:]_-]+:/{print substr($$1,1,index($$1,":")),c}1{c=0}' $(MAKEFILE_LIST) | column -s: -t
 
 # Run all tests
-test: lint code-style behat
+test: lint code-style unit-tests behat
 
 # Lint all php files
 lint:
@@ -20,8 +20,12 @@ phpmd:
 phpcs:
 	vendor/bin/phpcs --standard=PSR2 src/
 
+# Run unit tests
+unit-tests:
+	vendor/bin/phpunit
+
 # Run behat
 behat:
 	vendor/bin/behat
 
-.PHONY: help test lint code-style phpmd phpcs behat
+.PHONY: help test lint code-style phpmd phpcs unit-tests behat
