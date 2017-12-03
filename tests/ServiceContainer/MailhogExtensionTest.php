@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace rpkamp\Behat\MailhogExtension\Tests\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
+use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
+use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Behat\MailhogExtension\ServiceContainer\MailhogExtension;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -77,6 +79,19 @@ final class MailhogExtensionTest extends TestCase
 
         $definition = $this->container->getDefinition('mailhog.context_initializer');
         $this->assertEquals([['priority' => 0]], $definition->getTag(ContextExtension::INITIALIZER_TAG));
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_and_register_purge_listener()
+    {
+        $this->loadExtension($this->container);
+
+        $this->assertContainerHasServiceOfClass(EmailPurgeListener::class, 'mailhog.purge_listener');
+
+        $definition = $this->container->getDefinition('mailhog.purge_listener');
+        $this->assertEquals([['priority' => 0]], $definition->getTag(EventDispatcherExtension::SUBSCRIBER_TAG));
     }
 
     private function assertContainerHasServiceOfClass(string $className, string $serviceId)
