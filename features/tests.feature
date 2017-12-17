@@ -22,4 +22,4 @@ Feature: As the developer of this context I want it to function correctly
 
   Scenario: As a developer I want the extension to see attachments in emails
     Given I send an email with attachment "hello.txt"
-    Then I should receive an email with attachment "hello.txt"
+    Then I should see an email with attachment "hello.txt"

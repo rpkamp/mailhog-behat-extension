@@ -52,7 +52,7 @@ Then I should see an email with subject "subject" and body "body" from "sender@d
 Then I should see an email with subject "subject" from "sender@domain.example"
 Then I should see "some text" in email
 Then there should be 2 emails in my inbox
-Then I should receive an email with attachment "lorem-ipsum.pdf"
+Then I should see an email with attachment "lorem-ipsum.pdf"
 ```
 
 - `Given my inbox is empty` will actually purge all emails from Mailhog.

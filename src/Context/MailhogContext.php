@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace rpkamp\Behat\MailhogExtension\Context;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Exception;
 use rpkamp\Mailhog\MailhogClient;
 
@@ -86,9 +85,9 @@ final class MailhogContext implements MailhogAwareContext
     }
 
     /**
-     * @Then /^I should receive an email with attachment "([^"]*)"$/
+     * @Then /^I should see an email with attachment "([^"]*)"$/
      */
-    public function iShouldReceiveAnEmailWithAttachment(string $filename)
+    public function iShouldSeeAnEmailWithAttachment(string $filename)
     {
         $message = $this->mailhogClient->getLastMessage();
 
