@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7890c2ea2dc2ae916a53d6b94e9fb3d7",
+    "content-hash": "b505b4a234148da8bdb76f51f2267b7f",
     "packages": [
         {
             "name": "behat/behat",
@@ -625,16 +625,16 @@
         },
         {
             "name": "rpkamp/mailhog-client",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rpkamp/mailhog-client.git",
-                "reference": "5ed5dffd48f2b40c67af63564b2cf6749038c02c"
+                "reference": "9f612e62d95cf8340188c2dc447c67615cc20793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rpkamp/mailhog-client/zipball/5ed5dffd48f2b40c67af63564b2cf6749038c02c",
-                "reference": "5ed5dffd48f2b40c67af63564b2cf6749038c02c",
+                "url": "https://api.github.com/repos/rpkamp/mailhog-client/zipball/9f612e62d95cf8340188c2dc447c67615cc20793",
+                "reference": "9f612e62d95cf8340188c2dc447c67615cc20793",
                 "shasum": ""
             },
             "require": {
@@ -671,7 +671,7 @@
                 }
             ],
             "description": "Mailhog API Client for PHP",
-            "time": "2017-12-03T17:56:33+00:00"
+            "time": "2017-12-12T21:21:53+00:00"
         },
         {
             "name": "symfony/class-loader",
@@ -2729,7 +2729,7 @@
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
-    "prefer-lowest": true,
+    "prefer-lowest": false,
     "platform": {
         "php": "^7.1"
     },
