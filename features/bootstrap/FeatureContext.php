@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use PHPUnit\Framework\TestCase;
 use rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext;
 use rpkamp\Mailhog\MailhogClient;
 
@@ -25,7 +24,7 @@ final class FeatureContext implements Context, MailhogAwareContext
     public function iSendAnEmailWithSubjectAndBody(string $subject, string $body)
     {
         $message = (new Swift_Message())
-            ->setFrom('me@myself.example')
+            ->setFrom('me@myself.example', 'Myself')
             ->setTo('me@myself.example')
             ->setBody($body)
             ->setSubject($subject);
@@ -36,21 +35,23 @@ final class FeatureContext implements Context, MailhogAwareContext
     }
 
     /**
-     * @Then /^I should receive an email with subject "([^"]*)" and body "([^"]*)"$/
+     * @Given /^I send an email with attachment "([^"]*)"$/
      */
-    public function iShouldReceiveAnEmailWithSubjectAndBody(string $subject, string $body)
+    public function iSendAnEmailWithAttachment(string $filename)
     {
-        $message = $this->mailHog->getLastMessage();
+        $message = (new Swift_Message())
+            ->setFrom('me@myself.example', 'Myself')
+            ->setTo('me@myself.example')
+            ->setBody('Please see attached')
+            ->setSubject('Email with attachment')
+            ->attach(new Swift_Attachment(
+                'Hello world!',
+                $filename,
+                'text/plain'
+            ));
 
-        TestCase::assertEquals($subject, $message->subject);
-        TestCase::assertEquals($body, $message->body);
-    }
+        $mailer = new Swift_Mailer(new Swift_SmtpTransport('localhost', 3025));
 
-    /**
-     * @Then /^there should be (\d+) email in my inbox$/
-     */
-    public function thereShouldBeEmailInMyInbox(int $numEmails)
-    {
-        TestCase::assertEquals($numEmails, $this->mailHog->getNumberOfMessages());
+        $mailer->send($message);
     }
 }

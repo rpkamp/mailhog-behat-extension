@@ -22,7 +22,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.1",
-        "behat/behat": "^3.0.5",
+        "behat/behat": "^3.0.11",
         "rpkamp/mailhog-client": "^0.3.1",
         "php-http/discovery": "^1.3",
         "symfony/dependency-injection": "~2.7 || ~3.0 || ~4.0"

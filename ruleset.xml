@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="Locke ruleset">
+    <description>Mailhog Behat Extension Coding Standards</description>
+
+    <rule ref="PSR2">
+    </rule>
+
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <exclude-pattern>src/Context/MailhogContext.php</exclude-pattern>
+    </rule>
+</ruleset>
