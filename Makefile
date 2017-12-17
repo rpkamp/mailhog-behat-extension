@@ -14,11 +14,11 @@ code-style: phpmd phpcs
 
 # Check code for design problems
 phpmd: phpmd.phar
-	php phpmd.phar src/ xml phpmd.xml --suffixes php
+	php phpmd.phar src/ text phpmd.xml --suffixes php
 
 # Check code adheres to PSR-2
 phpcs:
-	vendor/bin/phpcs --standard=PSR2 src/
+	vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=ruleset.xml src/
 
 # Run unit tests
 unit-tests:

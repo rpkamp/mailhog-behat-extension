@@ -35,8 +35,11 @@ final class MailhogContext implements MailhogAwareContext
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)"$/
      */
-    public function iShouldReceiveAnEmailWithSubjectAndBodyFrom(string $subject = null, string $body = null, string $from = null)
-    {
+    public function iShouldReceiveAnEmailWithSubjectAndBodyFrom(
+        string $subject = null,
+        string $body = null,
+        string $from = null
+    ) {
         $message = $this->mailhogClient->getLastMessage();
 
         if (!empty($subject) && $subject !== $message->subject) {
