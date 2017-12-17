@@ -1,4 +1,4 @@
-# Mailhog Behat Extension [![Build Status](https://travis-ci.org/rpkamp/mailhog-behat-extensio.svg?branch=master)](https://travis-ci.org/rpkamp/mailhog-behat-extension)
+# Mailhog Behat Extension [![Build Status](https://travis-ci.org/rpkamp/mailhog-behat-extension.svg?branch=master)](https://travis-ci.org/rpkamp/mailhog-behat-extension)
 
 A simple PHP (7.1+) [Behat] extension for [Mailhog][mailhog].
 
@@ -29,9 +29,39 @@ default:
 
 The `base_url` is the URL where the Mailhog Web UI is listening to (by default this is `http://localhost:8025).
 
+### Use MailhogContext
+
+The easiest way to get started is to configure behat to use `rpkamp\Behat\MailhogExtension\Context\MailhogContext` like so:
+
+```yaml
+default:
+  suites:
+    contexts:
+      - rpkamp\Behat\MailhogExtension\Context\MailhogContext
+```
+
+This enables the following Gherkin for your scenarios to make assumptions on received email messages:
+
+```gherkin
+Given my inbox is empty
+Then I should see an email with subject "subject"
+Then I should see an email with body "body"
+Then I should see an email with from "sender@domain.example"
+Then I should see an email with subject "subject" and body "body"
+Then I should see an email with subject "subject" and body "body" from "sender@domain.example"
+Then I should see an email with subject "subject" from "sender@domain.example"
+Then I should see "some text" in email
+Then there should be 2 emails in my inbox
+Then I should receive an email with attachment "lorem-ipsum.pdf"
+```
+
+- `Given my inbox is empty` will actually purge all emails from Mailhog.
+
+- The `2` in `Then there should be 2 emails in my inbox` is variable, and the 's' in 'emails' is optional, so 'Then there is 1 email in my inbox' also works.
+
 ### Implement MailhogAwareContext
 
-Let your FeatureContext implement `MailhogAwareContext` and implement the method in that interface:
+If you want to implement something more advanced than `rpkamp\Behat\MailhogExtension\Context\MailhogContext` offers you can also implement `rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext` in your own context and implement the method in that interface:
 
 ```php
 <?php
@@ -51,7 +81,7 @@ class FeatureContext implements MailhogAwareContext
 }
 ```
 
-Now every time your FeatureContext is initialized Behat will inject a MailhogClient in it you can use using the `$mailhog` property of your context. For example:
+Now every time your FeatureContext is initialized Behat will inject an `rpkamp\MailhogClient` in it you can use using the `$mailhog` property of your context. For example:
 
 ```php
 <?php
@@ -64,7 +94,7 @@ class FeatureContext implements MailhogAwareContext
     // implement setMailhog as above
     
     /**
-     * @Then /^there should be (\d+) email in my inbox$/
+     * @Then /^there should be (\d+) email(?:s) in my inbox$/
      */
     public function thereShouldBeEmailInMyInbox(int $numEmails)
     {
