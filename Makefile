@@ -22,7 +22,7 @@ phpcs:
 
 # Run unit tests
 unit-tests:
-	vendor/bin/phpunit
+	vendor/bin/phpunit --testdox -v
 
 # Run behat
 behat:
