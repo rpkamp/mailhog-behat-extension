@@ -38,7 +38,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     {
         /** @var Mock|MailhogClient $client */
         $this->client = Mockery::spy(MailhogClient::class);
-        $this->listener = new EmailPurgeListener($this->client);
+        $this->listener = new EmailPurgeListener($this->client, 'email');
 
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addSubscriber($this->listener);
@@ -161,5 +161,29 @@ final class EmailPurgeListenerTest extends MockeryTestCase
         $this->dispatcher->dispatch(ExampleTested::BEFORE, $event);
 
         $this->client->shouldNotHaveReceived('purgeMessages');
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_use_custom_tag_to_purge_emails()
+    {
+        /** @var Mock|MailhogClient $client */
+        $client = Mockery::spy(MailhogClient::class);
+        $listener = new EmailPurgeListener($client, 'foobarbazban');
+
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber($listener);
+
+        $scenario = new ScenarioNode('test', [], [], 'test', 1);
+        $event = new BeforeScenarioTested(
+            new StaticEnvironment(new GenericSuite('generic', [])),
+            new FeatureNode('test', 'test', ['foobarbazban'], null, [$scenario], 'test', 'en_GB', null, 1),
+            $scenario
+        );
+
+        $dispatcher->dispatch(ScenarioTested::BEFORE, $event);
+
+        $client->shouldHaveReceived('purgeMessages');
     }
 }

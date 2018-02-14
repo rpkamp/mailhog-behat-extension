@@ -16,9 +16,18 @@ final class EmailPurgeListener implements EventSubscriberInterface
      */
     private $client;
 
-    public function __construct(MailhogClient $client)
+    /**
+     * The tag name for scenarios/features that trigger
+     * a mailhog purge. Defaults to 'email'.
+     *
+     * @var string
+     */
+    private $purgeTag;
+
+    public function __construct(MailhogClient $client, string $purgeTag)
     {
         $this->client = $client;
+        $this->purgeTag = $purgeTag;
     }
 
     public static function getSubscribedEvents()
@@ -35,7 +44,7 @@ final class EmailPurgeListener implements EventSubscriberInterface
         $feature  = $event->getFeature();
 
         foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
-            if ('email' === $tag) {
+            if ($this->purgeTag === $tag) {
                 $this->client->purgeMessages();
                 return;
             }

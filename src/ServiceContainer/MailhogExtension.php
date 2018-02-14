@@ -34,14 +34,17 @@ final class MailhogExtension implements Extension
     public function configure(ArrayNodeDefinition $builder)
     {
         $builder
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('base_url')->isRequired()->end()
+                ->scalarNode('purge_tag')->defaultValue('email')->end()
             ->end();
     }
 
     public function load(ContainerBuilder $container, array $config)
     {
         $container->setParameter('mailhog.base_url', $config['base_url']);
+        $container->setParameter('mailhog.purge_tag', $config['purge_tag']);
 
         $this->registerHttpClient($container);
         $this->registerHttpMessageFactory($container);
@@ -93,7 +96,10 @@ final class MailhogExtension implements Extension
 
     private function registerPurgeListener(ContainerBuilder $container): void
     {
-        $listener = new Definition(EmailPurgeListener::class, [new Reference('mailhog.client')]);
+        $listener = new Definition(EmailPurgeListener::class, [
+            new Reference('mailhog.client'),
+            '%mailhog.purge_tag%'
+        ]);
         $listener->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => 0]);
         $this->markServicePrivate($listener);
 
