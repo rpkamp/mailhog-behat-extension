@@ -12,6 +12,11 @@ use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Behat\MailhogExtension\ServiceContainer\MailhogExtension;
 use rpkamp\Mailhog\MailhogClient;
+use Symfony\Component\Config\Definition\ArrayNode;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class MailhogExtensionTest extends TestCase
@@ -94,6 +99,30 @@ final class MailhogExtensionTest extends TestCase
         $this->assertEquals([['priority' => 0]], $definition->getTag(EventDispatcherExtension::SUBSCRIBER_TAG));
     }
 
+    /**
+     * @test
+     */
+    public function it_should_throw_exception_when_no_base_url_supplied()
+    {
+        $node = new ArrayNodeDefinition(null);
+        (new MailhogExtension())->configure($node);
+
+        $this->expectException(InvalidConfigurationException::class);
+        (new Processor())->process($node->getNode(), [[]]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_default_email_purge_tag_if_none_supplied()
+    {
+        $node = new ArrayNodeDefinition(null);
+        (new MailhogExtension())->configure($node);
+
+        $configuration = (new Processor())->process($node->getNode(), [['base_url' => self::BASE_URL]]);
+        $this->assertEquals('email', $configuration['purge_tag']);
+    }
+
     private function assertContainerHasServiceOfClass(string $className, string $serviceId)
     {
         $definition = $this->container->getDefinition($serviceId);
@@ -103,6 +132,6 @@ final class MailhogExtensionTest extends TestCase
     private function loadExtension(ContainerBuilder $container)
     {
         $extension = new MailhogExtension();
-        $extension->load($container, ['base_url' => self::BASE_URL]);
+        $extension->load($container, ['base_url' => self::BASE_URL, 'purge_tag' => 'email']);
     }
 }

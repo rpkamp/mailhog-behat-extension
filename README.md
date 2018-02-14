@@ -25,9 +25,11 @@ default:
   extensions:
     rpkamp\Behat\MailhogExtension:
       base_url: http://localhost:8025
+      purge_tag: email # optional, defaults to 'email'
 ```
 
 The `base_url` is the URL where the Mailhog Web UI is listening to (by default this is `http://localhost:8025).
+The `purge_tag` is the behat tag that triggers a purge in mailhog before the scenario/feature (see "Use email tag to purge emails before scenarios")
 
 ### Use MailhogContext
 
@@ -118,6 +120,8 @@ Feature:
       When something happened
       Then there should be 1 email in my inbox
 ```
+
+If you want to use a different tag you can supply the name (without the initial @) in the `purge_tag` setting of this extension.
 
 ## Run tests
 
