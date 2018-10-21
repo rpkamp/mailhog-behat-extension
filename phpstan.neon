@@ -1,0 +1,6 @@
+includes:
+	- vendor/phpstan/phpstan-mockery/extension.neon
+
+parameters:
+    excludes_analyse:
+        - %rootDir%/../../../src/ServiceContainer/MailhogExtension.php

@@ -12,7 +12,7 @@ use Behat\Testwork\Environment\StaticEnvironment;
 use Behat\Testwork\Suite\GenericSuite;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\Mock;
+use Mockery\MockInterface;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 final class EmailPurgeListenerTest extends MockeryTestCase
 {
     /**
-     * @var Mock|MailhogClient
+     * @var MockInterface|MailhogClient
      */
     private $client;
 
@@ -36,7 +36,6 @@ final class EmailPurgeListenerTest extends MockeryTestCase
 
     public function setUp()
     {
-        /** @var Mock|MailhogClient $client */
         $this->client = Mockery::spy(MailhogClient::class);
         $this->listener = new EmailPurgeListener($this->client, 'email');
 
@@ -168,7 +167,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
      */
     public function it_should_use_custom_tag_to_purge_emails()
     {
-        /** @var Mock|MailhogClient $client */
+        /** @var MockInterface|MailhogClient $client */
         $client = Mockery::spy(MailhogClient::class);
         $listener = new EmailPurgeListener($client, 'foobarbazban');
 
