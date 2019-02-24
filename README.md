@@ -1,4 +1,4 @@
-# Mailhog Behat Extension [![Build Status](https://travis-ci.org/rpkamp/mailhog-behat-extension.svg?branch=master)](https://travis-ci.org/rpkamp/mailhog-behat-extension)
+# Mailhog Behat Extension [![CircleCI](https://circleci.com/gh/rpkamp/mailhog-behat-extension/tree/master.svg?style=svg)](https://circleci.com/gh/rpkamp/mailhog-behat-extension/tree/master)
 
 A simple PHP (7.1+) [Behat] extension for [Mailhog][mailhog].
 
