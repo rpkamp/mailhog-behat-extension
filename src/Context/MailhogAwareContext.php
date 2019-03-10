@@ -8,5 +8,5 @@ use rpkamp\Mailhog\MailhogClient;
 
 interface MailhogAwareContext extends Context
 {
-    public function setMailhog(MailhogClient $client);
+    public function setMailhog(MailhogClient $client): void;
 }

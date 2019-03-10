@@ -26,12 +26,12 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class MailhogExtension implements Extension
 {
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'mailhog';
     }
 
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
         $builder
             ->addDefaultsIfNotSet()
@@ -41,7 +41,7 @@ final class MailhogExtension implements Extension
             ->end();
     }
 
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('mailhog.base_url', $config['base_url']);
         $container->setParameter('mailhog.purge_tag', $config['purge_tag']);
@@ -106,7 +106,7 @@ final class MailhogExtension implements Extension
         $container->setDefinition('mailhog.purge_listener', $listener);
     }
 
-    private function markServicePrivate(Definition $definition)
+    private function markServicePrivate(Definition $definition): void
     {
         if (!method_exists($definition, 'setPrivate')) {
             // symfony/dependency-injection >= 3.4 where
@@ -117,7 +117,7 @@ final class MailhogExtension implements Extension
         $definition->setPrivate(true);
     }
 
-    public function markServicePublic(Definition $definition)
+    public function markServicePublic(Definition $definition): void
     {
         if (!method_exists($definition, 'setPublic')) {
             // symfony/dependency-injection < 3.4 where
@@ -128,11 +128,11 @@ final class MailhogExtension implements Extension
         $definition->setPublic(true);
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
     }
 
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 }

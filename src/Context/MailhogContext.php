@@ -13,7 +13,7 @@ final class MailhogContext implements MailhogAwareContext
      */
     private $mailhogClient;
 
-    public function setMailhog(MailhogClient $client)
+    public function setMailhog(MailhogClient $client): void
     {
         $this->mailhogClient = $client;
     }
@@ -21,7 +21,7 @@ final class MailhogContext implements MailhogAwareContext
     /**
      * @Given /^my inbox is empty$/
      */
-    public function myInboxIsEmpty()
+    public function myInboxIsEmpty(): void
     {
         $this->mailhogClient->purgeMessages();
     }
@@ -34,11 +34,11 @@ final class MailhogContext implements MailhogAwareContext
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)"$/
      */
-    public function iShouldReceiveAnEmailWithSubjectAndBodyFrom(
+    public function iShouldSeeAnEmailWithSubjectAndBodyFrom(
         string $subject = null,
         string $body = null,
         string $from = null
-    ) {
+    ): void {
         $message = $this->mailhogClient->getLastMessage();
 
         if (!empty($subject) && $subject !== $message->subject) {
@@ -57,7 +57,7 @@ final class MailhogContext implements MailhogAwareContext
     /**
      * @Given /^I should see "([^"]*)" in email$/
      */
-    public function iShouldSeeInEmail(string $text)
+    public function iShouldSeeInEmail(string $text): void
     {
         $message = $this->mailhogClient->getLastMessage();
 
@@ -69,7 +69,7 @@ final class MailhogContext implements MailhogAwareContext
     /**
      * @Then /^there should be (\d+) email(?:s)? in my inbox$/
      */
-    public function thereShouldBeEmailInMyInbox(int $numEmails)
+    public function thereShouldBeEmailInMyInbox(int $numEmails): void
     {
         $numMailhogMessages = $this->mailhogClient->getNumberOfMessages();
 
@@ -87,7 +87,7 @@ final class MailhogContext implements MailhogAwareContext
     /**
      * @Then /^I should see an email with attachment "([^"]*)"$/
      */
-    public function iShouldSeeAnEmailWithAttachment(string $filename)
+    public function iShouldSeeAnEmailWithAttachment(string $filename): void
     {
         $message = $this->mailhogClient->getLastMessage();
 
@@ -100,7 +100,7 @@ final class MailhogContext implements MailhogAwareContext
         }
 
         if (!$found) {
-            throw new Exception(sprintf('Messages does not contain a message with attachment "%s', $filename));
+            throw new Exception(sprintf('Messages does not contain a message with attachment "%s"', $filename));
         }
     }
 }

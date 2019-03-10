@@ -46,7 +46,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_purge_all_messages_before_each_scenario_in_feature_with_email_tag()
+    public function it_should_purge_all_messages_before_each_scenario_in_feature_with_email_tag(): void
     {
         $scenario = new ScenarioNode('test', [], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -63,7 +63,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_purge_all_messages_before_each_scenario_in_with_email_tag()
+    public function it_should_purge_all_messages_before_each_scenario_in_with_email_tag(): void
     {
         $scenario = new ScenarioNode('test', ['email'], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -80,7 +80,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_purge_all_messages_before_each_example_in_feature_with_email_tag()
+    public function it_should_purge_all_messages_before_each_example_in_feature_with_email_tag(): void
     {
         $scenario = new ScenarioNode('test', [], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -97,7 +97,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_purge_all_messages_before_each_example_with_email_tag()
+    public function it_should_purge_all_messages_before_each_example_with_email_tag(): void
     {
         $scenario = new ScenarioNode('test', ['email'], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -114,7 +114,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_purge_messages_only_once_on_multiple_email_tags()
+    public function it_should_purge_messages_only_once_on_multiple_email_tags(): void
     {
         $scenario = new ScenarioNode('test', ['email', 'email'], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -131,7 +131,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_not_purge_all_messages_before_each_scenario_without_email_tag()
+    public function it_should_not_purge_all_messages_before_each_scenario_without_email_tag(): void
     {
         $scenario = new ScenarioNode('test', [], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -148,7 +148,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_not_purge_all_messages_before_each_example_without_email_tag()
+    public function it_should_not_purge_all_messages_before_each_example_without_email_tag(): void
     {
         $scenario = new ScenarioNode('test', [], [], 'test', 1);
         $event = new BeforeScenarioTested(
@@ -165,7 +165,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
     /**
      * @test
      */
-    public function it_should_use_custom_tag_to_purge_emails()
+    public function it_should_use_custom_tag_to_purge_emails(): void
     {
         /** @var MockInterface|MailhogClient $client */
         $client = Mockery::spy(MailhogClient::class);

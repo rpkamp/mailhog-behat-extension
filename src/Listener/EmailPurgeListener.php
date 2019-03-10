@@ -30,7 +30,7 @@ final class EmailPurgeListener implements EventSubscriberInterface
         $this->purgeTag = $purgeTag;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ScenarioTested::BEFORE => ['purgeEmails', 10],
@@ -38,7 +38,7 @@ final class EmailPurgeListener implements EventSubscriberInterface
         ];
     }
 
-    public function purgeEmails(ScenarioLikeTested $event)
+    public function purgeEmails(ScenarioLikeTested $event): void
     {
         $scenario = $event->getScenario();
         $feature  = $event->getFeature();

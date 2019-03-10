@@ -12,9 +12,7 @@ use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Behat\MailhogExtension\ServiceContainer\MailhogExtension;
 use rpkamp\Mailhog\MailhogClient;
-use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,7 +34,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_the_base_url_as_a_container_parameter()
+    public function it_should_set_the_base_url_as_a_container_parameter(): void
     {
         $this->loadExtension($this->container);
 
@@ -46,7 +44,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_a_http_client_instance_in_the_container()
+    public function it_should_set_a_http_client_instance_in_the_container(): void
     {
         $this->loadExtension($this->container);
 
@@ -56,7 +54,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_a_http_message_factory_in_the_container()
+    public function it_should_set_a_http_message_factory_in_the_container(): void
     {
         $this->loadExtension($this->container);
 
@@ -66,7 +64,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_a_mailhog_client_instance_in_the_container()
+    public function it_should_set_a_mailhog_client_instance_in_the_container(): void
     {
         $this->loadExtension($this->container);
 
@@ -76,7 +74,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_initializer_with_correct_tag()
+    public function it_should_set_initializer_with_correct_tag(): void
     {
         $this->loadExtension($this->container);
 
@@ -89,7 +87,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_and_register_purge_listener()
+    public function it_should_set_and_register_purge_listener(): void
     {
         $this->loadExtension($this->container);
 
@@ -102,7 +100,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_throw_exception_when_no_base_url_supplied()
+    public function it_should_throw_exception_when_no_base_url_supplied(): void
     {
         $node = new ArrayNodeDefinition(null);
         (new MailhogExtension())->configure($node);
@@ -114,7 +112,7 @@ final class MailhogExtensionTest extends TestCase
     /**
      * @test
      */
-    public function it_should_set_default_email_purge_tag_if_none_supplied()
+    public function it_should_set_default_email_purge_tag_if_none_supplied(): void
     {
         $node = new ArrayNodeDefinition(null);
         (new MailhogExtension())->configure($node);
@@ -123,13 +121,13 @@ final class MailhogExtensionTest extends TestCase
         $this->assertEquals('email', $configuration['purge_tag']);
     }
 
-    private function assertContainerHasServiceOfClass(string $className, string $serviceId)
+    private function assertContainerHasServiceOfClass(string $className, string $serviceId): void
     {
         $definition = $this->container->getDefinition($serviceId);
         $this->assertInstanceOf($className, $this->container->resolveServices($definition));
     }
 
-    private function loadExtension(ContainerBuilder $container)
+    private function loadExtension(ContainerBuilder $container): void
     {
         $extension = new MailhogExtension();
         $extension->load($container, ['base_url' => self::BASE_URL, 'purge_tag' => 'email']);
