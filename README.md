@@ -1,6 +1,6 @@
 # Mailhog Behat Extension [![CircleCI](https://circleci.com/gh/rpkamp/mailhog-behat-extension/tree/master.svg?style=svg)](https://circleci.com/gh/rpkamp/mailhog-behat-extension/tree/master)
 
-A simple PHP (7.1+) [Behat] extension for [Mailhog][mailhog].
+A simple PHP (7.2+) [Behat] extension for [Mailhog][mailhog].
 
 ## Installation
 
