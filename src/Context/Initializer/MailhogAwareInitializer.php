@@ -20,12 +20,7 @@ final class MailhogAwareInitializer implements ContextInitializer
         $this->client = $client;
     }
 
-    /**
-     * Initializes provided context.
-     *
-     * @param Context $context
-     */
-    public function initializeContext(Context $context)
+    public function initializeContext(Context $context): void
     {
         if (!$context instanceof MailhogAwareContext) {
             return;

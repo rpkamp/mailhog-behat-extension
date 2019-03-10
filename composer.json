@@ -21,7 +21,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "behat/behat": "^3.0.11",
         "rpkamp/mailhog-client": "^0.3.2",
         "php-http/discovery": "^1.3",

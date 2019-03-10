@@ -13,7 +13,7 @@ final class FeatureContext implements Context, MailhogAwareContext
      */
     private $mailHog;
 
-    public function setMailhog(MailhogClient $client)
+    public function setMailhog(MailhogClient $client): void
     {
         $this->mailHog = $client;
     }
@@ -21,7 +21,7 @@ final class FeatureContext implements Context, MailhogAwareContext
     /**
      * @Given /^I send an email with subject "([^"]*)" and body "([^"]*)"$/
      */
-    public function iSendAnEmailWithSubjectAndBody(string $subject, string $body)
+    public function iSendAnEmailWithSubjectAndBody(string $subject, string $body): void
     {
         $message = (new Swift_Message())
             ->setFrom('me@myself.example', 'Myself')
@@ -37,7 +37,7 @@ final class FeatureContext implements Context, MailhogAwareContext
     /**
      * @Given /^I send an email with attachment "([^"]*)"$/
      */
-    public function iSendAnEmailWithAttachment(string $filename)
+    public function iSendAnEmailWithAttachment(string $filename): void
     {
         $message = (new Swift_Message())
             ->setFrom('me@myself.example', 'Myself')
