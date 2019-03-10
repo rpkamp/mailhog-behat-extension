@@ -34,7 +34,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
      */
     private $dispatcher;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = Mockery::spy(MailhogClient::class);
         $this->listener = new EmailPurgeListener($this->client, 'email');

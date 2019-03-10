@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace rpkamp\Behat\MailhogExtension\Tests\Context\Initializer;
 
 use Behat\Behat\Context\Context;
+use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
@@ -25,8 +27,8 @@ final class MailhogAwareInitializerTest extends TestCase
             }
         };
 
-        /** @var MockObject|MailhogClient $mailhogClient */
-        $mailhogClient = $this->createMock(MailhogClient::class);
+        /** @var MockInterface|MailhogClient $mailhogClient */
+        $mailhogClient = Mockery::mock(MailhogClient::class);
 
         $initializer = new MailhogAwareInitializer($mailhogClient);
         $initializer->initializeContext($context);
@@ -47,8 +49,8 @@ final class MailhogAwareInitializerTest extends TestCase
             }
         };
 
-        /** @var MockObject|MailhogClient $mailhogClient */
-        $mailhogClient = $this->createMock(MailhogClient::class);
+        /** @var MockInterface|MailhogClient $mailhogClient */
+        $mailhogClient = Mockery::mock(MailhogClient::class);
 
         $initializer = new MailhogAwareInitializer($mailhogClient);
         $initializer->initializeContext($context);
