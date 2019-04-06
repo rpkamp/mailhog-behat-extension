@@ -89,7 +89,7 @@ workflows:
               only:
                 - master
     jobs:
-      - php7-2
-      - php7-3
-      - php7-2-lowest
-      - php7-3-lowest
+      - php7.2
+      - php7.3
+      - php7.2-lowest
+      - php7.3-lowest
