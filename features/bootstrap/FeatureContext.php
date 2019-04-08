@@ -20,12 +20,13 @@ final class FeatureContext implements Context, MailhogAwareContext
 
     /**
      * @Given /^I send an email with subject "([^"]*)" and body "([^"]*)"$/
+     * @Given /^I send an email with subject "([^"]*)" and body "([^"]*)" to "([^"]*)"$/
      */
-    public function iSendAnEmailWithSubjectAndBody(string $subject, string $body): void
+    public function iSendAnEmailWithSubjectAndBodyTo(string $subject, string $body, string $to = 'me@myself.exmple'): void
     {
         $message = (new Swift_Message())
             ->setFrom('me@myself.example', 'Myself')
-            ->setTo('me@myself.example')
+            ->setTo($to)
             ->setBody($body)
             ->setSubject($subject);
 

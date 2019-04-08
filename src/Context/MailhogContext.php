@@ -5,6 +5,7 @@ namespace rpkamp\Behat\MailhogExtension\Context;
 
 use Exception;
 use rpkamp\Mailhog\MailhogClient;
+use rpkamp\Mailhog\Message\Contact;
 
 final class MailhogContext implements MailhogAwareContext
 {
@@ -33,11 +34,20 @@ final class MailhogContext implements MailhogAwareContext
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)"$/
+     *
+     * @Then /^I should see an email to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email with subject "(?P<subject>[^"]*)" to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email with body "(?P<body>[^"]*)" to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email from "(?P<from>[^"]*)" to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)" to "(?P<to>[^"]*)"$/
+     * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)" to "(?P<to>[^"]*)"$/
      */
-    public function iShouldSeeAnEmailWithSubjectAndBodyFrom(
+    public function iShouldSeeAnEmailWithSubjectAndBodyFromTo(
         string $subject = null,
         string $body = null,
-        string $from = null
+        string $from = null,
+        string $to = null
     ): void {
         $message = $this->mailhogClient->getLastMessage();
 
@@ -51,6 +61,10 @@ final class MailhogContext implements MailhogAwareContext
 
         if (!empty($from) && $from !== $message->sender->emailAddress && $from !== $message->sender->name) {
             throw new Exception(sprintf('Could not find expected message from "%s"', $from));
+        }
+
+        if (!empty($to) && false === $message->recipients->contains(Contact::fromString($to))) {
+            throw new Exception(sprintf('Could not find expected message to "%s"', $to));
         }
     }
 
