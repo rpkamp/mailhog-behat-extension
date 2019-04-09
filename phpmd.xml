@@ -16,7 +16,9 @@
         <exclude name="UnusedFormalParameter" />
     </rule>
 
-    <rule ref="rulesets/codesize.xml" />
+    <rule ref="rulesets/codesize.xml">
+           <exclude name="CyclomaticComplexity" />
+    </rule>
 
     <rule ref="rulesets/controversial.xml" />
 
@@ -24,5 +26,12 @@
 
     <rule ref="rulesets/naming.xml">
         <exclude name="LongVariable" />
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
+        <priority>1</priority>
+        <properties>
+            <property name="reportLevel" value="15" />
+        </properties>
     </rule>
 </ruleset>
