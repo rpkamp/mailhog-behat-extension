@@ -11,3 +11,5 @@ phpmd.xml export-ignore
 README.md export-ignore
 features/ export-ignore
 ruleset.xml export-ignore
+phpmd.phar export-ignore
+
