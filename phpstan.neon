@@ -1,7 +1,13 @@
 includes:
-	- vendor/phpstan/phpstan-mockery/extension.neon
+    - vendor/phpstan/phpstan-mockery/extension.neon
 
 parameters:
     excludes_analyse:
         - %rootDir%/../../../src/ServiceContainer/MailhogExtension.php
         - %rootDir%/../../../tests/ServiceContainer/MailhogExtensionTest.php
+    ignoreErrors:
+        -
+            # symfony/dispatcher dispatch() changed from (string, object) to (object[, string]) in 4.3
+            message: '~Symfony\\Component\\EventDispatcher\\EventDispatcher::dispatch\(\).~'
+            path: tests/Listener/EmailPurgeListenerTest.php
+    reportUnmatchedIgnoredErrors: false
