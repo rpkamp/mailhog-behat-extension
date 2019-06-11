@@ -4,19 +4,30 @@ declare(strict_types=1);
 namespace rpkamp\Behat\MailhogExtension\Context;
 
 use Exception;
+use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
 
-final class MailhogContext implements MailhogAwareContext
+final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
     /**
      * @var MailhogClient
      */
     private $mailhogClient;
 
+    /**
+     * @var OpenedEmailStorage
+     */
+    private $openedEmailStorage;
+
     public function setMailhog(MailhogClient $client): void
     {
         $this->mailhogClient = $client;
+    }
+
+    public function setOpenedEmailStorage(OpenedEmailStorage $storage)
+    {
+        $this->openedEmailStorage = $storage;
     }
 
     /**
