@@ -7,6 +7,7 @@ use Exception;
 use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
+use RuntimeException;
 
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
@@ -77,6 +78,57 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
         if (!empty($recipient) && false === $message->recipients->contains(Contact::fromString($recipient))) {
             throw new Exception(sprintf('Could not find expected message to "%s"', $recipient));
         }
+    }
+
+    /**
+     * @When /^I open the latest email from "(?P<from>[^"]*)"$/
+     * @When /^I open the latest email to "(?P<recipient>[^"]*)"$/
+     * @When /^I open the latest email with subject "(?P<subject>[^"]*)"$/
+     *
+     * @When /^I open the latest email from "(?P<from>[^"]*)" with subject "(?P<subject>[^"]*)"$/
+     * @When /^I open the latest email to "(?P<recipient>[^"]*)" with subject "(?P<subject>[^"]*)"$/
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    public function iOpenTheEmail(string $from = null, string $recipient = null, string $subject = null): void
+    {
+        foreach ($this->mailhogClient->findAllMessages() as $message) {
+            if (!empty($from) && $from !== $message->sender->emailAddress && $from !== $message->sender->name) {
+                continue;
+            }
+
+            if (!empty($recipient) && false === $message->recipients->contains(Contact::fromString($recipient))) {
+                continue;
+            }
+
+            if (!empty($subject) && $subject !== $message->subject) {
+                continue;
+            }
+
+            $this->openedEmailStorage->setOpenedEmail($message);
+            return;
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                'No message found%s%s%s',
+                !empty($from) ? sprintf(' from "%s"', $from) : '',
+                !empty($recipient) ? sprintf(' to "%s"', $recipient) : '',
+                !empty($subject) ? sprintf(' with subject "%s"', $subject) : ''
+            )
+        );
+    }
+
+    /**
+     * @Then /^I should see "(?P<text>[^"]*)" in the opened email$/
+     */
+    public function iShouldSeeInTheOpenedEmail(string $text): bool
+    {
+        if (!$this->openedEmailStorage->hasOpenedEmail()) {
+            throw new RuntimeException('Unable to look for text in opened email - no email was opened yet');
+        }
+
+        return strpos($this->openedEmailStorage->getOpenedEmail()->body, $text) !== false;
     }
 
     /**
