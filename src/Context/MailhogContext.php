@@ -132,6 +132,26 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
     }
 
     /**
+     * @Then /^I should see an attachment with filename "(?P<filename>[^"]*)" in the opened email$/
+     */
+    public function iShouldAttachmentInOpenedEmail(string $filename): void
+    {
+        $found = false;
+        foreach ($this->openedEmailStorage->getOpenedEmail()->attachments as $attachment) {
+            if ($filename === $attachment->filename) {
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            throw new RuntimeException(
+                sprintf('Opened email does not contain an attachment with filename "%s"', $filename)
+            );
+        }
+    }
+
+    /**
      * @Given /^I should see "([^"]*)" in email$/
      */
     public function iShouldSeeInEmail(string $text): void

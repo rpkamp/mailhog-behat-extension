@@ -37,6 +37,11 @@ Feature: As the developer of this context I want it to function correctly
     When I open the latest email to "test@example.org"
     Then I should see "See you later" in the opened email
 
+  Scenario: As a user I want to check for an attachment in an opened email
+    Given I send an email with attachment "hello.txt"
+    When I open the latest email from "me@myself.example"
+    Then I should see an attachment with filename "hello.txt" in the opened email
+
   @email
   Scenario: As a developer I want the extension to purge the inbox for email tag
     Given I send an email with subject "Hello" and body "How are you?"
