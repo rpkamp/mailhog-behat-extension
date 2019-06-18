@@ -61,6 +61,21 @@ Then I should see an email with attachment "lorem-ipsum.pdf"
 
 - The `2` in `Then there should be 2 emails in my inbox` is variable, and the 's' in 'emails' is optional, so 'Then there is 1 email in my inbox' also works.
 
+Alternatively you can "open" an email an run assumptions on the opened email:
+
+```gherkin
+When I open the latest email from "sender@domain.example"
+When I open the latest email to "recipient@domain.example"
+When I open the latest email with subject "Hello world"
+When I open the latest email from "sender@domain.example" with subject "Hello world"
+When I open the latest email to "recipient@domain.example" with subject "Hello world"
+
+Then I should see "Hello world" in the opened email
+Then I should see an attachment with filename "lorem-ipsum.pdf" in the opened email
+```
+
+Take care that the implementation of this currently isn't very efficient. If there are a lot of emails in Mailhog it might take a while, especially when the email you're looking for is not there.
+
 ### Implement MailhogAwareContext
 
 If you want to implement something more advanced than `rpkamp\Behat\MailhogExtension\Context\MailhogContext` offers you can also implement `rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext` in your own context and implement the method in that interface:
@@ -122,6 +137,45 @@ Feature:
 ```
 
 If you want to use a different tag you can supply the name (without the initial @) in the `purge_tag` setting of this extension.
+
+### Implement OpenedEmailStorageAwareContext (Advanced)
+
+If you want to write an extension/context for behat that uses the feature of opening email from this extension you can have your `Context` implement `OpenedEmailStorageAwareContext`:
+
+```php
+<?php
+
+use rpkamp\Behat\MailhogExtension\Context\OpenedEmailStorageAwareContext;
+use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
+
+class FeatureContext implements OpenedEmailStorageAwareContext
+{
+    /**
+     * @var OpenedEmailStorage
+     */
+    private $storage;
+
+    public function setOpenedEmailStorage(OpenedEmailStorage $storage)
+    {
+        $this->openedEmailStorage = $storage;
+    }
+
+    /**
+     * @Then ^I do something with the opened email$
+     */
+    public function iDoSomethingWithTheOpenedEmail(): void
+    {
+        if (!$this->storage->hasOpenedEmail()) {
+            throw new RuntimeException('No email opened, unable to do something!');
+        }
+
+        /** @var \rpkamp\Mailhog\Message\Message $openedEmail */
+        $openedEmail = $this->storage->getOpenedEmail();
+
+        // do stuff with $openedEmail
+    }
+}
+```
 
 ## Run tests
 
