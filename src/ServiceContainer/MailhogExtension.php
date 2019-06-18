@@ -12,7 +12,9 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\MessageFactory;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
+use rpkamp\Behat\MailhogExtension\Context\Initializer\OpenedEmailStorageContextInitializer;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
+use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -51,6 +53,9 @@ final class MailhogExtension implements Extension
         $this->registerMailhogClient($container);
         $this->registerContextInitializer($container);
         $this->registerPurgeListener($container);
+
+        $this->registerOpenedEmailStorage($container);
+        $this->registerOpenedEmailStorageContextInitializer($container);
     }
 
     private function registerHttpClient(ContainerBuilder $container): void
@@ -92,6 +97,25 @@ final class MailhogExtension implements Extension
         $contextInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
         $this->markServicePrivate($contextInitializer);
         $container->setDefinition('mailhog.context_initializer', $contextInitializer);
+    }
+
+    private function registerOpenedEmailStorage(ContainerBuilder $container): void
+    {
+        $openedEmailStorage = new Definition(OpenedEmailStorage::class);
+        $this->markServicePrivate($openedEmailStorage);
+
+        $container->setDefinition('mailhog.opened_email_storage', $openedEmailStorage);
+    }
+
+    private function registerOpenedEmailStorageContextInitializer(ContainerBuilder $container): void
+    {
+        $openMailInitializer = new Definition(OpenedEmailStorageContextInitializer::class, [
+            new Reference('mailhog.opened_email_storage')
+        ]);
+        $openMailInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
+        $this->markServicePrivate($openMailInitializer);
+
+        $container->setDefinition('mailhog.opened_email_storage.context_initializer', $openMailInitializer);
     }
 
     private function registerPurgeListener(ContainerBuilder $container): void

@@ -6,7 +6,6 @@ namespace rpkamp\Behat\MailhogExtension\Tests\Context\Initializer;
 use Behat\Behat\Context\Context;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
 use rpkamp\Behat\MailhogExtension\Context\MailhogAwareContext;
