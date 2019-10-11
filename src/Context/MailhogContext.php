@@ -7,6 +7,12 @@ use Exception;
 use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
+use rpkamp\Mailhog\Specification\AndSpecification;
+use rpkamp\Mailhog\Specification\AttachmentSpecification;
+use rpkamp\Mailhog\Specification\BodySpecification;
+use rpkamp\Mailhog\Specification\RecipientSpecification;
+use rpkamp\Mailhog\Specification\SenderSpecification;
+use rpkamp\Mailhog\Specification\SubjectSpecification;
 use RuntimeException;
 
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
@@ -54,6 +60,8 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function iShouldSeeAnEmailWithSubjectAndBodyFromToRecipient(
         string $subject = null,
@@ -61,23 +69,39 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
         string $from = null,
         string $recipient = null
     ): void {
-        $message = $this->mailhogClient->getLastMessage();
+        $specifications = [];
 
-        if (!empty($subject) && $subject !== $message->subject) {
-            throw new Exception(sprintf('Expected subject "%s", found "%s"', $subject, $message->subject));
+        if (!empty($subject)) {
+            $specifications[] = new SubjectSpecification($subject);
         }
 
-        if (!empty($body) && $body !== $message->body) {
-            throw new Exception('Unexpected body value');
+        if (!empty($body)) {
+            $specifications[] = new BodySpecification($body);
         }
 
-        if (!empty($from) && $from !== $message->sender->emailAddress && $from !== $message->sender->name) {
-            throw new Exception(sprintf('Could not find expected message from "%s"', $from));
+        if (!empty($from)) {
+            $specifications[] = new SenderSpecification(Contact::fromString($from));
         }
 
-        if (!empty($recipient) && false === $message->recipients->contains(Contact::fromString($recipient))) {
-            throw new Exception(sprintf('Could not find expected message to "%s"', $recipient));
+        if (!empty($recipient)) {
+            $specifications[] = new RecipientSpecification(Contact::fromString($recipient));
         }
+
+        $messages = $this->mailhogClient->findMessagesSatisfying(AndSpecification::all(...$specifications));
+
+        if (count($messages) > 0) {
+            return;
+        }
+
+        throw new RuntimeException(
+            sprintf(
+                'No message found%s%s%s%s',
+                !empty($from) ? sprintf(' from "%s"', $from) : '',
+                !empty($recipient) ? sprintf(' to "%s"', $recipient) : '',
+                !empty($subject) ? sprintf(' with subject "%s"', $subject) : '',
+                !empty($body) ? sprintf(' with body "%s"', $body) : ''
+            )
+        );
     }
 
     /**
@@ -92,43 +116,50 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      */
     public function iOpenTheEmail(string $from = null, string $recipient = null, string $subject = null): void
     {
-        foreach ($this->mailhogClient->findAllMessages() as $message) {
-            if (!empty($from) && $from !== $message->sender->emailAddress && $from !== $message->sender->name) {
-                continue;
-            }
+        $specifications = [];
 
-            if (!empty($recipient) && false === $message->recipients->contains(Contact::fromString($recipient))) {
-                continue;
-            }
-
-            if (!empty($subject) && $subject !== $message->subject) {
-                continue;
-            }
-
-            $this->openedEmailStorage->setOpenedEmail($message);
-            return;
+        if (!empty($from)) {
+            $specifications[] = new SenderSpecification(Contact::fromString($from));
         }
 
-        throw new RuntimeException(
-            sprintf(
-                'No message found%s%s%s',
-                !empty($from) ? sprintf(' from "%s"', $from) : '',
-                !empty($recipient) ? sprintf(' to "%s"', $recipient) : '',
-                !empty($subject) ? sprintf(' with subject "%s"', $subject) : ''
-            )
-        );
+        if (!empty($recipient)) {
+            $specifications[] = new RecipientSpecification(Contact::fromString($recipient));
+        }
+
+        if (!empty($subject)) {
+            $specifications[] = new SubjectSpecification($subject);
+        }
+
+        $messages = $this->mailhogClient->findMessagesSatisfying(AndSpecification::all(...$specifications));
+
+        if (count($messages) === 0) {
+            throw new RuntimeException(
+                sprintf(
+                    'No message found%s%s%s',
+                    !empty($from) ? sprintf(' from "%s"', $from) : '',
+                    !empty($recipient) ? sprintf(' to "%s"', $recipient) : '',
+                    !empty($subject) ? sprintf(' with subject "%s"', $subject) : ''
+                )
+            );
+        }
+
+        $this->openedEmailStorage->setOpenedEmail($messages[0]);
     }
 
     /**
      * @Then /^I should see "(?P<text>[^"]*)" in the opened email$/
      */
-    public function iShouldSeeInTheOpenedEmail(string $text): bool
+    public function iShouldSeeInTheOpenedEmail(string $text): void
     {
         if (!$this->openedEmailStorage->hasOpenedEmail()) {
             throw new RuntimeException('Unable to look for text in opened email - no email was opened yet');
         }
 
-        return strpos($this->openedEmailStorage->getOpenedEmail()->body, $text) !== false;
+        $specification = new BodySpecification($text);
+
+        if (!$specification->isSatisfiedBy($this->openedEmailStorage->getOpenedEmail())) {
+            throw new Exception(sprintf('Could not find "%s" in email', $text));
+        }
     }
 
     /**
@@ -136,15 +167,13 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      */
     public function iShouldAttachmentInOpenedEmail(string $filename): void
     {
-        $found = false;
-        foreach ($this->openedEmailStorage->getOpenedEmail()->attachments as $attachment) {
-            if ($filename === $attachment->filename) {
-                $found = true;
-                break;
-            }
+        if (!$this->openedEmailStorage->hasOpenedEmail()) {
+            throw new RuntimeException('Unable to look for text in opened email - no email was opened yet');
         }
 
-        if (!$found) {
+        $specification = new AttachmentSpecification($filename);
+
+        if (!$specification->isSatisfiedBy($this->openedEmailStorage->getOpenedEmail())) {
             throw new RuntimeException(
                 sprintf('Opened email does not contain an attachment with filename "%s"', $filename)
             );
@@ -156,9 +185,11 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      */
     public function iShouldSeeInEmail(string $text): void
     {
-        $message = $this->mailhogClient->getLastMessage();
+        $specification = new BodySpecification($text);
 
-        if (false === strpos($message->body, $text)) {
+        $messages = $this->mailhogClient->findMessagesSatisfying($specification);
+
+        if (count($messages) === 0) {
             throw new Exception(sprintf('Could not find "%s" in email', $text));
         }
     }
@@ -186,17 +217,11 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      */
     public function iShouldSeeAnEmailWithAttachment(string $filename): void
     {
-        $message = $this->mailhogClient->getLastMessage();
+        $specification = new AttachmentSpecification($filename);
 
-        $found = false;
-        foreach ($message->attachments as $attachment) {
-            if ($filename === $attachment->filename) {
-                $found = true;
-                break;
-            }
-        }
+        $messages = $this->mailhogClient->findMessagesSatisfying($specification);
 
-        if (!$found) {
+        if (count($messages) === 0) {
             throw new Exception(sprintf('Messages does not contain a message with attachment "%s"', $filename));
         }
     }
