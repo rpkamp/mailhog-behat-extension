@@ -20,10 +20,12 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use function method_exists;
 
 /**
  * This class configures a lot of services, so needs access
  * to a lot of classes. Therefore high coupling is allowed here.
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 final class MailhogExtension implements Extension
@@ -43,6 +45,9 @@ final class MailhogExtension implements Extension
             ->end();
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function load(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('mailhog.base_url', $config['base_url']);
@@ -81,7 +86,7 @@ final class MailhogExtension implements Extension
         $mailhogClient = new Definition(MailhogClient::class, [
             new Reference('mailhog.http_client'),
             new Reference('mailhog.http_message_factory'),
-            '%mailhog.base_url%'
+            '%mailhog.base_url%',
         ]);
         $this->markServicePublic($mailhogClient);
 
@@ -110,7 +115,7 @@ final class MailhogExtension implements Extension
     private function registerOpenedEmailStorageContextInitializer(ContainerBuilder $container): void
     {
         $openMailInitializer = new Definition(OpenedEmailStorageContextInitializer::class, [
-            new Reference('mailhog.opened_email_storage')
+            new Reference('mailhog.opened_email_storage'),
         ]);
         $openMailInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
         $this->markServicePrivate($openMailInitializer);
@@ -122,7 +127,7 @@ final class MailhogExtension implements Extension
     {
         $listener = new Definition(EmailPurgeListener::class, [
             new Reference('mailhog.client'),
-            '%mailhog.purge_tag%'
+            '%mailhog.purge_tag%',
         ]);
         $listener->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => 0]);
         $this->markServicePrivate($listener);
