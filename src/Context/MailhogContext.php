@@ -14,6 +14,8 @@ use rpkamp\Mailhog\Specification\RecipientSpecification;
 use rpkamp\Mailhog\Specification\SenderSpecification;
 use rpkamp\Mailhog\Specification\SubjectSpecification;
 use RuntimeException;
+use function count;
+use function sprintf;
 
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
@@ -32,7 +34,7 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
         $this->mailhogClient = $client;
     }
 
-    public function setOpenedEmailStorage(OpenedEmailStorage $storage)
+    public function setOpenedEmailStorage(OpenedEmailStorage $storage): void
     {
         $this->openedEmailStorage = $storage;
     }
@@ -52,7 +54,6 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)"$/
-     *
      * @Then /^I should see an email to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with body "(?P<body>[^"]*)" to "(?P<recipient>[^"]*)"$/
@@ -60,14 +61,13 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function iShouldSeeAnEmailWithSubjectAndBodyFromToRecipient(
-        string $subject = null,
-        string $body = null,
-        string $from = null,
-        string $recipient = null
+        ?string $subject = null,
+        ?string $body = null,
+        ?string $from = null,
+        ?string $recipient = null
     ): void {
         $specifications = [];
 
@@ -108,13 +108,11 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @When /^I open the latest email from "(?P<from>[^"]*)"$/
      * @When /^I open the latest email to "(?P<recipient>[^"]*)"$/
      * @When /^I open the latest email with subject "(?P<subject>[^"]*)"$/
-     *
      * @When /^I open the latest email from "(?P<from>[^"]*)" with subject "(?P<subject>[^"]*)"$/
      * @When /^I open the latest email to "(?P<recipient>[^"]*)" with subject "(?P<subject>[^"]*)"$/
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function iOpenTheEmail(string $from = null, string $recipient = null, string $subject = null): void
+    public function iOpenTheEmail(?string $from = null, ?string $recipient = null, ?string $subject = null): void
     {
         $specifications = [];
 

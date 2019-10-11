@@ -8,5 +8,5 @@ use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 
 interface OpenedEmailStorageAwareContext extends Context
 {
-    public function setOpenedEmailStorage(OpenedEmailStorage $storage);
+    public function setOpenedEmailStorage(OpenedEmailStorage $storage): void;
 }

@@ -8,6 +8,7 @@ use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use function array_merge;
 
 final class EmailPurgeListener implements EventSubscriberInterface
 {
@@ -30,6 +31,9 @@ final class EmailPurgeListener implements EventSubscriberInterface
         $this->purgeTag = $purgeTag;
     }
 
+    /**
+     * @return array<string, array<string|int>>
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -46,6 +50,7 @@ final class EmailPurgeListener implements EventSubscriberInterface
         foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
             if ($this->purgeTag === $tag) {
                 $this->client->purgeMessages();
+
                 return;
             }
         }

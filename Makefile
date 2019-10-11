@@ -18,7 +18,7 @@ phpmd:
 
 # Check code adheres to PSR-2
 phpcs:
-	vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1 --standard=ruleset.xml src/
+	vendor/bin/phpcs
 
 # Run unit tests
 unit-tests:
