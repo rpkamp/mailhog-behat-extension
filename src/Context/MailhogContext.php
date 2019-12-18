@@ -14,6 +14,7 @@ use rpkamp\Mailhog\Specification\RecipientSpecification;
 use rpkamp\Mailhog\Specification\SenderSpecification;
 use rpkamp\Mailhog\Specification\SubjectSpecification;
 use RuntimeException;
+use function array_keys;
 use function count;
 use function sprintf;
 
@@ -141,7 +142,9 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
             );
         }
 
-        $this->openedEmailStorage->setOpenedEmail($messages[0]);
+        $messageKeys = array_keys($messages);
+
+        $this->openedEmailStorage->setOpenedEmail($messages[$messageKeys[0]]);
     }
 
     /**
