@@ -44,6 +44,12 @@ Feature: As the developer of this context I want it to function correctly
     When I open the latest email to "test@example.org"
     Then I should see "See you later" in the opened email
 
+  Scenario: As as user I want to open an email based on body
+    Given I send an email with subject "Hello" and body "How are you?" to "test@example.org"
+    Given I send an email with subject "Goodbye" and body "See you later" to "test@example.org"
+    When I open the latest email with body "How are you?"
+    Then I should see "How are you?" in the opened email
+
   Scenario: As a user I want to check for an attachment in an opened email
     Given I send an email with attachment "hello.txt"
     When I open the latest email from "me@myself.example"
