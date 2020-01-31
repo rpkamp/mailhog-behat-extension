@@ -12,12 +12,16 @@ use rpkamp\Mailhog\Specification\AttachmentSpecification;
 use rpkamp\Mailhog\Specification\BodySpecification;
 use rpkamp\Mailhog\Specification\RecipientSpecification;
 use rpkamp\Mailhog\Specification\SenderSpecification;
+use rpkamp\Mailhog\Specification\Specification;
 use rpkamp\Mailhog\Specification\SubjectSpecification;
 use RuntimeException;
-use function array_keys;
+use function array_shift;
 use function count;
 use function sprintf;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
     /**
@@ -29,6 +33,36 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @var OpenedEmailStorage
      */
     private $openedEmailStorage;
+
+    /**
+     * @return Specification[]
+     */
+    private function getSpecifications(
+        ?string $subject = null,
+        ?string $body = null,
+        ?string $from = null,
+        ?string $recipient = null
+    ): array {
+        $specifications = [];
+
+        if (!empty($subject)) {
+            $specifications[] = new SubjectSpecification($subject);
+        }
+
+        if (!empty($body)) {
+            $specifications[] = new BodySpecification($body);
+        }
+
+        if (!empty($from)) {
+            $specifications[] = new SenderSpecification(Contact::fromString($from));
+        }
+
+        if (!empty($recipient)) {
+            $specifications[] = new RecipientSpecification(Contact::fromString($recipient));
+        }
+
+        return $specifications;
+    }
 
     public function setMailhog(MailhogClient $client): void
     {
@@ -62,7 +96,6 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @Then /^I should see an email with subject "(?P<subject>[^"]*)" from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function iShouldSeeAnEmailWithSubjectAndBodyFromToRecipient(
         ?string $subject = null,
@@ -70,23 +103,7 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
         ?string $from = null,
         ?string $recipient = null
     ): void {
-        $specifications = [];
-
-        if (!empty($subject)) {
-            $specifications[] = new SubjectSpecification($subject);
-        }
-
-        if (!empty($body)) {
-            $specifications[] = new BodySpecification($body);
-        }
-
-        if (!empty($from)) {
-            $specifications[] = new SenderSpecification(Contact::fromString($from));
-        }
-
-        if (!empty($recipient)) {
-            $specifications[] = new RecipientSpecification(Contact::fromString($recipient));
-        }
+        $specifications = $this->getSpecifications($subject, $body, $from, $recipient);
 
         $messages = $this->mailhogClient->findMessagesSatisfying(AndSpecification::all(...$specifications));
 
@@ -109,25 +126,24 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
      * @When /^I open the latest email from "(?P<from>[^"]*)"$/
      * @When /^I open the latest email to "(?P<recipient>[^"]*)"$/
      * @When /^I open the latest email with subject "(?P<subject>[^"]*)"$/
+     * @When /^I open the latest email with body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)"$/
      * @When /^I open the latest email from "(?P<from>[^"]*)" with subject "(?P<subject>[^"]*)"$/
      * @When /^I open the latest email to "(?P<recipient>[^"]*)" with subject "(?P<subject>[^"]*)"$/
-     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @When /^I open the latest email from "(?P<from>[^"]*)" with body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email to "(?P<recipient>[^"]*)" with body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email from "(?P<from>[^"]*)" with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email to "(?P<recipient>[^"]*)" with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
+     * @When /^I open the latest email from "(?P<from>[^"]*)" to "(?P<recipient>[^"]*)" with subject "(?P<subject>[^"]*)" and body "(?P<body>[^"]*)"$/
      */
-    public function iOpenTheEmail(?string $from = null, ?string $recipient = null, ?string $subject = null): void
-    {
-        $specifications = [];
-
-        if (!empty($from)) {
-            $specifications[] = new SenderSpecification(Contact::fromString($from));
-        }
-
-        if (!empty($recipient)) {
-            $specifications[] = new RecipientSpecification(Contact::fromString($recipient));
-        }
-
-        if (!empty($subject)) {
-            $specifications[] = new SubjectSpecification($subject);
-        }
+    public function iOpenTheEmail(
+        ?string $from = null,
+        ?string $recipient = null,
+        ?string $subject = null,
+        ?string $body = null
+    ): void {
+        $specifications = $this->getSpecifications($subject, $body, $from, $recipient);
 
         $messages = $this->mailhogClient->findMessagesSatisfying(AndSpecification::all(...$specifications));
 
@@ -142,9 +158,7 @@ final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwa
             );
         }
 
-        $messageKeys = array_keys($messages);
-
-        $this->openedEmailStorage->setOpenedEmail($messages[$messageKeys[0]]);
+        $this->openedEmailStorage->setOpenedEmail(array_shift($messages));
     }
 
     /**
