@@ -52,6 +52,13 @@ Then I should see an email with from "sender@domain.example"
 Then I should see an email with subject "subject" and body "body"
 Then I should see an email with subject "subject" and body "body" from "sender@domain.example"
 Then I should see an email with subject "subject" from "sender@domain.example"
+Then I should see an email to "recipient@domain.example"
+Then I should see an email with subject "subject" to "recipient@domain.example"
+Then I should see an email with body "body" to "recipient@domain.example"
+Then I should see an email from "sender@domain.example" to "recipient@domain.example"
+Then I should see an email with subject "subject" and body "body" to "recipient@domain.example"
+Then I should see an email with subject "subject" and body "body" from "sender@domain.example" to "recipient@domain.example"
+Then I should see an email with subject "subject" from "sender@domain.example" to "recipient@domain.example"
 Then I should see "some text" in email
 Then there should be 2 emails in my inbox
 Then I should see an email with attachment "lorem-ipsum.pdf"
@@ -69,7 +76,14 @@ When I open the latest email to "recipient@domain.example"
 When I open the latest email with subject "Hello world"
 When I open the latest email from "sender@domain.example" with subject "Hello world"
 When I open the latest email to "recipient@domain.example" with subject "Hello world"
-
+When I open the latest email with body "body"
+When I open the latest email with subject "subject" and body "body"
+When I open the latest email from "sender@domain.example" to "recipient@domain.example"
+When I open the latest email from "sender@domain.example" with body "body"
+When I open the latest email to "recipient@domain.example" with body "body"
+When I open the latest email from "sender@domain.example" with subject "subject" and body "body"
+When I open the latest email to "recipient@domain.example" with subject "subject" and body "body"
+When I open the latest email from "sender@domain.example" to "recipient@domain.example" with subject "subject" and body "body"
 Then I should see "Hello world" in the opened email
 Then I should see an attachment with filename "lorem-ipsum.pdf" in the opened email
 ```
