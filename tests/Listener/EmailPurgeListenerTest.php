@@ -15,7 +15,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Mailhog\MailhogClient;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcher as SymfonyEventDispatcher;
 
 final class EmailPurgeListenerTest extends MockeryTestCase
 {
@@ -39,7 +39,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
         $this->client = Mockery::spy(MailhogClient::class);
         $this->listener = new EmailPurgeListener($this->client, 'email');
 
-        $this->dispatcher = new EventDispatcher();
+        $this->dispatcher = new EventDispatcher(new SymfonyEventDispatcher());
         $this->dispatcher->addSubscriber($this->listener);
     }
 
@@ -55,7 +55,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ScenarioTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ScenarioTested::BEFORE);
 
         $this->client->shouldHaveReceived('purgeMessages');
     }
@@ -72,7 +72,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ScenarioTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ScenarioTested::BEFORE);
 
         $this->client->shouldHaveReceived('purgeMessages');
     }
@@ -89,7 +89,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ExampleTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ExampleTested::BEFORE);
 
         $this->client->shouldHaveReceived('purgeMessages');
     }
@@ -106,7 +106,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ExampleTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ExampleTested::BEFORE);
 
         $this->client->shouldHaveReceived('purgeMessages');
     }
@@ -123,7 +123,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ExampleTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ExampleTested::BEFORE);
 
         $this->client->shouldHaveReceived('purgeMessages')->once();
     }
@@ -140,7 +140,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ScenarioTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ScenarioTested::BEFORE);
 
         $this->client->shouldNotHaveReceived('purgeMessages');
     }
@@ -157,7 +157,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $this->dispatcher->dispatch(ExampleTested::BEFORE, $event);
+        $this->dispatcher->dispatch($event, ExampleTested::BEFORE);
 
         $this->client->shouldNotHaveReceived('purgeMessages');
     }
@@ -171,7 +171,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
         $client = Mockery::spy(MailhogClient::class);
         $listener = new EmailPurgeListener($client, 'foobarbazban');
 
-        $dispatcher = new EventDispatcher();
+        $dispatcher = new EventDispatcher(new SymfonyEventDispatcher());
         $dispatcher->addSubscriber($listener);
 
         $scenario = new ScenarioNode('test', [], [], 'test', 1);
@@ -181,7 +181,7 @@ final class EmailPurgeListenerTest extends MockeryTestCase
             $scenario
         );
 
-        $dispatcher->dispatch(ScenarioTested::BEFORE, $event);
+        $dispatcher->dispatch($event, ScenarioTested::BEFORE);
 
         $client->shouldHaveReceived('purgeMessages');
     }
