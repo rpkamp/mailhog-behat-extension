@@ -19,6 +19,7 @@ final class MailhogAwareInitializerTest extends TestCase
     public function it_should_inject_mailhog_client_in_a_mailhog_aware_context(): void
     {
         $context = new class implements Context, MailhogAwareContext {
+            /** @var MailhogClient $mailhogClient */
             public $mailhogClient;
             public function setMailhog(MailhogClient $client): void
             {
@@ -41,6 +42,7 @@ final class MailhogAwareInitializerTest extends TestCase
     public function it_should_ignore_non_mailhog_aware_contexts(): void
     {
         $context = new class implements Context {
+            /** @var MailhogClient $mailhogClient */
             public $mailhogClient;
             public function setMailhog(MailhogClient $client): void
             {
