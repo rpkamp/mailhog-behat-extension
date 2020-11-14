@@ -36,6 +36,7 @@
         "mockery/mockery": "^1.2.3",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-mockery": "^0.12",
-        "doctrine/coding-standard": "^8.0"
+        "doctrine/coding-standard": "^8.0",
+        "egulias/email-validator": "^2.1.23"
     }
 }
