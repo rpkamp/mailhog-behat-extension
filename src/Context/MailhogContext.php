@@ -15,6 +15,7 @@ use rpkamp\Mailhog\Specification\SenderSpecification;
 use rpkamp\Mailhog\Specification\Specification;
 use rpkamp\Mailhog\Specification\SubjectSpecification;
 use RuntimeException;
+
 use function array_shift;
 use function count;
 use function sprintf;
