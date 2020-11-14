@@ -8,6 +8,7 @@ use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 use function array_merge;
 
 final class EmailPurgeListener implements EventSubscriberInterface
