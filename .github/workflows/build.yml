@@ -19,7 +19,7 @@ jobs:
         ports:
           - 3025:3025
           - 10025:10025
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     name: Test
     strategy:
       fail-fast: false
