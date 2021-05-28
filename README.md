@@ -48,7 +48,7 @@ This enables the following Gherkin for your scenarios to make assumptions on rec
 Given my inbox is empty
 Then I should see an email with subject "subject"
 Then I should see an email with body "body"
-Then I should see an email with from "sender@domain.example"
+Then I should see an email from "sender@domain.example"
 Then I should see an email with subject "subject" and body "body"
 Then I should see an email with subject "subject" and body "body" from "sender@domain.example"
 Then I should see an email with subject "subject" from "sender@domain.example"
