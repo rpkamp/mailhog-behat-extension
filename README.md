@@ -1,4 +1,4 @@
-# Mailhog Behat Extension ![Packagist Version](https://img.shields.io/packagist/v/rpkamp/mailhog-behat-extension)s
+# Mailhog Behat Extension ![Packagist Version](https://img.shields.io/packagist/v/rpkamp/mailhog-behat-extension)
 
 A simple PHP (7.2+) [Behat] extension for [Mailhog][mailhog].
 
