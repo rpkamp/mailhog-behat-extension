@@ -25,15 +25,8 @@ use function sprintf;
  */
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
-    /**
-     * @var MailhogClient
-     */
-    private $mailhogClient;
-
-    /**
-     * @var OpenedEmailStorage
-     */
-    private $openedEmailStorage;
+    private MailhogClient $mailhogClient;
+    private OpenedEmailStorage $openedEmailStorage;
 
     /**
      * @return Specification[]

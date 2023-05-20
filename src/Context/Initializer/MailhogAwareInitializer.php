@@ -10,10 +10,7 @@ use rpkamp\Mailhog\MailhogClient;
 
 final class MailhogAwareInitializer implements ContextInitializer
 {
-    /**
-     * @var MailhogClient
-     */
-    private $client;
+    private MailhogClient $client;
 
     public function __construct(MailhogClient $client)
     {

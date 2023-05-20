@@ -21,10 +21,7 @@ final class MailhogExtensionTest extends TestCase
 {
     public const BASE_URL = 'http://localhost:10025/';
 
-    /**
-     * @var ContainerBuilder
-     */
-    private $container;
+    private ContainerBuilder $container;
 
     public function setUp(): void
     {

@@ -20,19 +20,11 @@ use Symfony\Component\EventDispatcher\EventDispatcher as SymfonyEventDispatcher;
 final class EmailPurgeListenerTest extends MockeryTestCase
 {
     /**
-     * @var MockInterface|MailhogClient
+     * @var MailhogClient|MockInterface
      */
-    private $client;
-
-    /**
-     * @var EmailPurgeListener
-     */
-    private $listener;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    private MailhogClient $client;
+    private EmailPurgeListener $listener;
+    private EventDispatcher $dispatcher;
 
     public function setUp(): void
     {
