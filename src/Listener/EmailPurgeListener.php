@@ -13,10 +13,7 @@ use function array_merge;
 
 final class EmailPurgeListener implements EventSubscriberInterface
 {
-    /**
-     * @var MailhogClient
-     */
-    private $client;
+    private MailhogClient $client;
 
     /**
      * The tag name for scenarios/features that trigger

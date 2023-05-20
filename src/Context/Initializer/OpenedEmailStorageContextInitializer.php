@@ -10,10 +10,7 @@ use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 
 final class OpenedEmailStorageContextInitializer implements ContextInitializer
 {
-    /**
-     * @var OpenedEmailStorage
-     */
-    private $openedEmailStorage;
+    private OpenedEmailStorage $openedEmailStorage;
 
     public function __construct(OpenedEmailStorage $openedEmailStorage)
     {

@@ -19,12 +19,12 @@ jobs:
         ports:
           - 3025:3025
           - 10025:10025
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Test
     strategy:
       fail-fast: false
       matrix:
-        php: ["7.2", "7.3", "7.4", "8.0"]
+        php: ["7.4", "8.0", "8.1", "8.2"]
         composer-flags: ["", "--prefer-lowest"]
 
     steps:

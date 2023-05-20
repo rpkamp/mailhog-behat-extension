@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use rpkamp\Behat\MailhogExtension\Service\OpenedEmailStorage;
 use rpkamp\Mailhog\Message\Contact;
 use rpkamp\Mailhog\Message\ContactCollection;
+use rpkamp\Mailhog\Message\Headers;
 use rpkamp\Mailhog\Message\Message;
 use RuntimeException;
 
@@ -68,7 +69,8 @@ class OpenedEmailStorageTest extends TestCase
             new ContactCollection([]),
             'Test e-mail',
             'Hello there!',
-            []
+            [],
+            new Headers([]),
         );
     }
 }
