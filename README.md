@@ -1,6 +1,6 @@
 # Mailhog Behat Extension ![Packagist Version](https://img.shields.io/packagist/v/rpkamp/mailhog-behat-extension)
 
-A simple PHP (7.4+) [Behat] extension for [Mailhog][mailhog].
+A simple PHP (8.1+) [Behat] extension for [Mailhog][mailhog].
 
 ## Installation
 
