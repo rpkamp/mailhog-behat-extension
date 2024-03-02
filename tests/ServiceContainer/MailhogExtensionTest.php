@@ -8,6 +8,8 @@ use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Http\Client\HttpClient;
 use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
 use rpkamp\Behat\MailhogExtension\ServiceContainer\MailhogExtension;
@@ -16,6 +18,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpClient\Psr18Client;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class MailhogExtensionTest extends TestCase
 {
@@ -45,17 +49,27 @@ final class MailhogExtensionTest extends TestCase
     {
         $this->loadExtension($this->container);
 
-        $this->assertContainerHasServiceOfClass(HttpClient::class, 'mailhog.http_client');
+        $this->assertContainerHasServiceOfClass(Psr18Client::class, 'mailhog.http_client');
     }
 
     /**
      * @test
      */
-    public function it_should_set_a_http_message_factory_in_the_container(): void
+    public function it_should_set_a_http_stream_factory_instance_in_the_container(): void
     {
         $this->loadExtension($this->container);
 
-        $this->assertContainerHasServiceOfClass(MessageFactory::class, 'mailhog.http_message_factory');
+        $this->assertContainerHasServiceOfClass(StreamFactoryInterface::class, 'mailhog.http_stream_factory');
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_set_a_http_request_factory_in_the_container(): void
+    {
+        $this->loadExtension($this->container);
+
+        $this->assertContainerHasServiceOfClass(RequestFactoryInterface::class, 'mailhog.http_request_factory');
     }
 
     /**

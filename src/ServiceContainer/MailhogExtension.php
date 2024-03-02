@@ -7,10 +7,10 @@ use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
-use Http\Client\HttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use PsrDiscovery\Discover;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\MailhogAwareInitializer;
 use rpkamp\Behat\MailhogExtension\Context\Initializer\OpenedEmailStorageContextInitializer;
 use rpkamp\Behat\MailhogExtension\Listener\EmailPurgeListener;
@@ -56,6 +56,7 @@ final class MailhogExtension implements Extension
 
         $this->registerHttpClient($container);
         $this->registerHttpMessageFactory($container);
+        $this->registerHttpStreamFactory($container);
         $this->registerMailhogClient($container);
         $this->registerContextInitializer($container);
         $this->registerPurgeListener($container);
@@ -66,8 +67,8 @@ final class MailhogExtension implements Extension
 
     private function registerHttpClient(ContainerBuilder $container): void
     {
-        $httpClient = new Definition(HttpClient::class);
-        $httpClient->setFactory([HttpClientDiscovery::class, 'find']);
+        $httpClient = new Definition(ClientInterface::class);
+        $httpClient->setFactory([Discover::class, 'httpClient']);
         $this->markServicePrivate($httpClient);
 
         $container->setDefinition('mailhog.http_client', $httpClient);
@@ -75,18 +76,28 @@ final class MailhogExtension implements Extension
 
     private function registerHttpMessageFactory(ContainerBuilder $container): void
     {
-        $httpMessageFactory = new Definition(MessageFactory::class);
-        $httpMessageFactory->setFactory([MessageFactoryDiscovery::class, 'find']);
-        $this->markServicePrivate($httpMessageFactory);
+        $httpRequestFactory = new Definition(RequestFactoryInterface::class);
+        $httpRequestFactory->setFactory([Discover::class, 'httpRequestFactory']);
+        $this->markServicePrivate($httpRequestFactory);
 
-        $container->setDefinition('mailhog.http_message_factory', $httpMessageFactory);
+        $container->setDefinition('mailhog.http_request_factory', $httpRequestFactory);
+    }
+
+    private function registerHttpStreamFactory(ContainerBuilder $container): void
+    {
+        $httpStreamFactory = new Definition(StreamFactoryInterface::class);
+        $httpStreamFactory->setFactory([Discover::class, 'httpStreamFactory']);
+        $this->markServicePrivate($httpStreamFactory);
+
+        $container->setDefinition('mailhog.http_stream_factory', $httpStreamFactory);
     }
 
     private function registerMailhogClient(ContainerBuilder $container): void
     {
         $mailhogClient = new Definition(MailhogClient::class, [
             new Reference('mailhog.http_client'),
-            new Reference('mailhog.http_message_factory'),
+            new Reference('mailhog.http_request_factory'),
+            new Reference('mailhog.http_stream_factory'),
             '%mailhog.base_url%',
         ]);
         $this->markServicePublic($mailhogClient);
