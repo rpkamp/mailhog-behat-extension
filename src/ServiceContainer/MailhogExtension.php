@@ -21,8 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-use function method_exists;
-
 /**
  * This class configures a lot of services, so needs access
  * to a lot of classes. Therefore high coupling is allowed here.
@@ -69,7 +67,6 @@ final class MailhogExtension implements Extension
     {
         $httpClient = new Definition(ClientInterface::class);
         $httpClient->setFactory([Discover::class, 'httpClient']);
-        $this->markServicePrivate($httpClient);
 
         $container->setDefinition('mailhog.http_client', $httpClient);
     }
@@ -78,7 +75,6 @@ final class MailhogExtension implements Extension
     {
         $httpRequestFactory = new Definition(RequestFactoryInterface::class);
         $httpRequestFactory->setFactory([Discover::class, 'httpRequestFactory']);
-        $this->markServicePrivate($httpRequestFactory);
 
         $container->setDefinition('mailhog.http_request_factory', $httpRequestFactory);
     }
@@ -87,7 +83,6 @@ final class MailhogExtension implements Extension
     {
         $httpStreamFactory = new Definition(StreamFactoryInterface::class);
         $httpStreamFactory->setFactory([Discover::class, 'httpStreamFactory']);
-        $this->markServicePrivate($httpStreamFactory);
 
         $container->setDefinition('mailhog.http_stream_factory', $httpStreamFactory);
     }
@@ -100,7 +95,7 @@ final class MailhogExtension implements Extension
             new Reference('mailhog.http_stream_factory'),
             '%mailhog.base_url%',
         ]);
-        $this->markServicePublic($mailhogClient);
+        $mailhogClient->setPublic(true);
 
         $container->setDefinition('mailhog.client', $mailhogClient);
     }
@@ -112,14 +107,12 @@ final class MailhogExtension implements Extension
         ]);
 
         $contextInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
-        $this->markServicePrivate($contextInitializer);
         $container->setDefinition('mailhog.context_initializer', $contextInitializer);
     }
 
     private function registerOpenedEmailStorage(ContainerBuilder $container): void
     {
         $openedEmailStorage = new Definition(OpenedEmailStorage::class);
-        $this->markServicePrivate($openedEmailStorage);
 
         $container->setDefinition('mailhog.opened_email_storage', $openedEmailStorage);
     }
@@ -130,7 +123,6 @@ final class MailhogExtension implements Extension
             new Reference('mailhog.opened_email_storage'),
         ]);
         $openMailInitializer->addTag(ContextExtension::INITIALIZER_TAG, ['priority' => 0]);
-        $this->markServicePrivate($openMailInitializer);
 
         $container->setDefinition('mailhog.opened_email_storage.context_initializer', $openMailInitializer);
     }
@@ -142,31 +134,8 @@ final class MailhogExtension implements Extension
             '%mailhog.purge_tag%',
         ]);
         $listener->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, ['priority' => 0]);
-        $this->markServicePrivate($listener);
 
         $container->setDefinition('mailhog.purge_listener', $listener);
-    }
-
-    private function markServicePrivate(Definition $definition): void
-    {
-        if (!method_exists($definition, 'setPrivate')) {
-            // symfony/dependency-injection >= 3.4 where
-            // all services are private by default
-            return;
-        }
-
-        $definition->setPrivate(true);
-    }
-
-    public function markServicePublic(Definition $definition): void
-    {
-        if (!method_exists($definition, 'setPublic')) {
-            // symfony/dependency-injection < 3.4 where
-            // all services are public by default
-            return;
-        }
-
-        $definition->setPublic(true);
     }
 
     public function process(ContainerBuilder $container): void

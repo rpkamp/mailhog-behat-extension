@@ -5,8 +5,6 @@ namespace rpkamp\Behat\MailhogExtension\Tests\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\EventDispatcher\ServiceContainer\EventDispatcherExtension;
-use Http\Client\HttpClient;
-use Http\Message\MessageFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -19,7 +17,6 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpClient\Psr18Client;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class MailhogExtensionTest extends TestCase
 {
