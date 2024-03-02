@@ -4,8 +4,6 @@ on:
   push:
     branches: [master]
   pull_request:
-  schedule:
-    - cron: '51 3 * * 0'
 
 jobs:
   tests:
@@ -24,8 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["7.4", "8.0", "8.1", "8.2"]
-        composer-flags: ["", "--prefer-lowest"]
+        php: ["8.0", "8.1", "8.2", "8.3"]
 
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +33,7 @@ jobs:
           php-version: "${{ matrix.php }}"
 
       - name: Install dependencies
-        run: composer update ${{ matrix.composer-flags }}
+        run: composer update
 
       - name: Run tests
         run: make test
