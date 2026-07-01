@@ -27,7 +27,7 @@
         "symfony/dependency-injection": "^6.4 || ^7.0",
         "psr-discovery/http-client-implementations": "^1.0",
         "psr-discovery/http-factory-implementations": "^1.0",
-        "symfony/http-client": "^6.0"
+        "symfony/http-client": "^6.0 || ^7.0"
     },
     "require-dev": {
         "guzzlehttp/psr7": "^1.6",
