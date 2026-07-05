@@ -30,7 +30,7 @@
         "symfony/http-client": "^6.0 || ^7.0"
     },
     "require-dev": {
-        "guzzlehttp/psr7": "^1.6",
+        "guzzlehttp/psr7": "^2.4",
         "php-parallel-lint/php-parallel-lint": "^1.2",
         "swiftmailer/swiftmailer": "^6.2",
         "phpunit/phpunit": "^9.0",

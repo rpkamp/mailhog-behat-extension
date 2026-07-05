@@ -6,6 +6,7 @@ namespace rpkamp\Behat\MailhogExtension\Listener;
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
+use Behat\Gherkin\Node\TaggedNodeInterface;
 use rpkamp\Mailhog\MailhogClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -45,7 +46,9 @@ final class EmailPurgeListener implements EventSubscriberInterface
         $scenario = $event->getScenario();
         $feature  = $event->getFeature();
 
-        foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
+        $scenarioTags = $scenario instanceof TaggedNodeInterface ? $scenario->getTags() : [];
+
+        foreach (array_merge($feature->getTags(), $scenarioTags) as $tag) {
             if ($this->purgeTag === $tag) {
                 $this->client->purgeMessages();
 
