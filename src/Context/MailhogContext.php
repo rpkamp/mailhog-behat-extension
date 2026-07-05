@@ -21,7 +21,7 @@ use function count;
 use function sprintf;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
  */
 final class MailhogContext implements MailhogAwareContext, OpenedEmailStorageAwareContext
 {
