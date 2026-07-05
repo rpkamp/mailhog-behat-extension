@@ -42,7 +42,7 @@ final class MailhogAwareInitializerTest extends TestCase
     public function it_should_ignore_non_mailhog_aware_contexts(): void
     {
         $context = new class implements Context {
-            /** @var MailhogClient $mailhogClient */
+            /** @var MailhogClient|null $mailhogClient */
             public $mailhogClient;
             public function setMailhog(MailhogClient $client): void
             {
