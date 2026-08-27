@@ -212,8 +212,15 @@ docker-compose up -d
 
 To prevent port collisions with any other Mailhog instances while testing the tests expect Mailhog to listen to SMTP on port 3025 (instead of the default 1025) and to HTTP traffic on port 10025 (instead of the default 8025).
 
+## Support
+
+Like this package? Buy me a coffee 🙂
+
+[Send a tip via Revolut][revolut]
+
 [behat]: http://behat.org/
 [mailhog]: https://github.com/mailhog/MailHog
 [httplug]: https://github.com/php-http/httplug
 [mailhog-client]: https://github.com/rpkamp/mailhog-client
 [httplug-docs]: http://docs.php-http.org/en/latest/httplug/users.html
+[revolut]: https://revolut.me/rpkamp
